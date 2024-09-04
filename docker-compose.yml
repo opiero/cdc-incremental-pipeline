@@ -6,4 +6,4 @@ services:
     environment:
       - POSTGRES_PASSWORD=password
       - POSTGRES_USER=root
-      - POSTGRES_DB=db
+      - POSTGRES_DB=university
