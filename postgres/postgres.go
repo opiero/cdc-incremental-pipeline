@@ -3,15 +3,7 @@ package postgres
 import (
 	"database/sql"
 	"fmt"
-	"os"
 )
-
-type Student struct {
-	Id    int
-	Name  string
-	Email string
-	Age   int
-}
 
 func Connect(host string, port int, user string, password string, dbName string) (*sql.DB, error) {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
@@ -31,13 +23,7 @@ func Connect(host string, port int, user string, password string, dbName string)
 	return db, nil
 }
 
-func ExecSqlScript(db *sql.DB, filepath string) error {
-	content, err := os.ReadFile(filepath)
-	if err != nil {
-		panic(err)
-	}
-
-	command := string(content)
-	_, err = db.Exec(command)
+func ExecSqlCommand(db *sql.DB, command string) error {
+	_, err := db.Exec(command)
 	return err
 }
