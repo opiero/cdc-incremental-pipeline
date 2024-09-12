@@ -1,12 +1,11 @@
 package main
 
 import (
-	"bytes"
 	"cdc-incremental-pipeline/postgres"
+	"cdc-incremental-pipeline/utils"
 	"fmt"
 	"log"
 	"os"
-	"text/template"
 
 	_ "github.com/lib/pq"
 )
@@ -37,11 +36,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	student := &postgres.Student{Name: "fodao", Email: "fod@o.com", Age: 22}
-	tmpl, err := template.New("insert").Parse(string(content))
-	var result bytes.Buffer
-	tmpl.Execute(&result, student)
-	command := result.String()
-	fmt.Println(command)
+	student := postgres.Student{Name: "fodao", Email: "fod@o.com", Age: 22}
+	text_template := string(content)
+	utils.CompileTemplate(&text_template, &student)
 	// db.Exec(command)
 }
