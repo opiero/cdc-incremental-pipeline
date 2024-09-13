@@ -22,8 +22,3 @@ func Connect(host string, port int, user string, password string, dbName string)
 
 	return db, nil
 }
-
-func ExecSqlCommand(db *sql.DB, command string) error {
-	_, err := db.Exec(command)
-	return err
-}

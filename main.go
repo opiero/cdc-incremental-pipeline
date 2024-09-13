@@ -20,16 +20,17 @@ const (
 )
 
 func main() {
-	// db, err := postgres.Connect(host, port, user, password, dbName)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// defer db.Close()
+	db, err := postgres.Connect(host, port, user, password, dbName)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
 
-	// err = postgres.ExecSqlScript(db, fmt.Sprintf("%s/create_table.sql", sqlPath))
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	command, err := os.ReadFile(fmt.Sprintf("./%s/create_table.sql", sqlPath))
+	if err != nil {
+		log.Fatal(err)
+	}
+	db.Exec(string(command))
 
 	content, err := os.ReadFile(fmt.Sprintf("%s/templates/insert_into_table.sql", sqlPath))
 	if err != nil {
@@ -42,6 +43,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(output)
-	// db.Exec(command)
+
+	db.Exec(output)
 }
