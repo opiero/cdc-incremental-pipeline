@@ -19,9 +19,9 @@ func isPointerToStruct(value interface{}) bool {
 	return false
 }
 
-func CompileTemplate(rawTemplate *string, values *interface{}) (string, error) {
-	if reflect.TypeOf(*values).Kind() != reflect.Struct {
-		return "", errors.New("values must be a struct")
+func CompileTemplate(rawTemplate *string, values interface{}) (string, error) {
+	if !isPointerToStruct(values) {
+		return "", errors.New("values must be a pointer to struct")
 	}
 
 	tmpl, err := template.New("").Parse(*rawTemplate)
@@ -29,8 +29,9 @@ func CompileTemplate(rawTemplate *string, values *interface{}) (string, error) {
 		panic(err)
 	}
 
+	dereferentiatedPointer := reflect.ValueOf(values).Elem()
 	var result bytes.Buffer
-	err = tmpl.Execute(&result, *values)
+	err = tmpl.Execute(&result, dereferentiatedPointer)
 	if err != nil {
 		panic(err)
 	}

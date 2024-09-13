@@ -20,11 +20,11 @@ const (
 )
 
 func main() {
-	db, err := postgres.Connect(host, port, user, password, dbName)
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
+	// db, err := postgres.Connect(host, port, user, password, dbName)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// defer db.Close()
 
 	// err = postgres.ExecSqlScript(db, fmt.Sprintf("%s/create_table.sql", sqlPath))
 	// if err != nil {
@@ -38,6 +38,10 @@ func main() {
 
 	student := postgres.Student{Name: "fodao", Email: "fod@o.com", Age: 22}
 	text_template := string(content)
-	utils.CompileTemplate(&text_template, &student)
+	output, err := utils.CompileTemplate(&text_template, &student)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(output)
 	// db.Exec(command)
 }
