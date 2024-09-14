@@ -1,8 +1,8 @@
 package main
 
 import (
+	"bufio"
 	"cdc-incremental-pipeline/postgres"
-	"cdc-incremental-pipeline/utils"
 	"fmt"
 	"log"
 	"os"
@@ -16,7 +16,6 @@ const (
 	user     = "root"
 	password = "password"
 	dbName   = "university"
-	sqlPath  = "resources/sql"
 )
 
 func main() {
@@ -26,23 +25,29 @@ func main() {
 	}
 	defer db.Close()
 
-	command, err := os.ReadFile(fmt.Sprintf("./%s/create_table.sql", sqlPath))
-	if err != nil {
-		log.Fatal(err)
-	}
-	db.Exec(string(command))
-
-	content, err := os.ReadFile(fmt.Sprintf("%s/templates/insert_into_table.sql", sqlPath))
+	err = postgres.CreateTable(db)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	student := postgres.Student{Name: "fodao", Email: "fod@o.com", Age: 22}
-	text_template := string(content)
-	output, err := utils.CompileTemplate(&text_template, &student)
+	student := postgres.Student{Name: "lek", Email: "lek@dinossauro.com", Age: 100}
+	err = postgres.InsertRowIntoTable(db, &student)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
-	db.Exec(output)
+	fmt.Println("Pressione Enter para continuar...")
+	bufio.NewReader(os.Stdin).ReadBytes('\n')
+	fmt.Println("Continuando...")
+
+	updateData := postgres.UpdateTableData{
+		TableName:   "students",
+		ColumnName:  "email",
+		ColumnValue: "'loucao@bla.co'",
+		Id:          2,
+	}
+	err = postgres.UpdateTableRow(db, &updateData)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

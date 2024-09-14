@@ -19,9 +19,9 @@ func isPointerToStruct(value interface{}) bool {
 	return false
 }
 
-func CompileTemplate(rawTemplate *string, values interface{}) (string, error) {
+func CompileTemplate(rawTemplate *string, values interface{}) string {
 	if !isPointerToStruct(values) {
-		return "", errors.New("values must be a pointer to struct")
+		panic(errors.New("values must be a struct pointer"))
 	}
 
 	tmpl, err := template.New("").Parse(*rawTemplate)
@@ -36,5 +36,5 @@ func CompileTemplate(rawTemplate *string, values interface{}) (string, error) {
 		panic(err)
 	}
 
-	return result.String(), nil
+	return result.String()
 }
