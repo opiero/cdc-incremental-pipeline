@@ -13,7 +13,13 @@ const (
 	createTablePath             = sqlPath + "/create_table.sql"
 	insertIntoTableTemplatePath = templatesPath + "/insert_into_table.sql"
 	updateRowTemplatePath       = templatesPath + "/update_line_from_table.sql"
+	deleteRowTemplatePath       = templatesPath + "/delete_from_table.sql"
 )
+
+type DeleteTableData struct {
+	TableName string
+	Id        int
+}
 
 type UpdateTableData struct {
 	TableName   string
@@ -63,6 +69,15 @@ func UpdateTableRow(db *sql.DB, data *UpdateTableData) error {
 	}
 
 	commandTemplate := readFile(updateRowTemplatePath)
+	command := utils.CompileTemplate(&commandTemplate, data)
+
+	_, err := db.Exec(command)
+
+	return err
+}
+
+func DeleteRowFromTable(db *sql.DB, data *DeleteTableData) error {
+	commandTemplate := readFile(deleteRowTemplatePath)
 	command := utils.CompileTemplate(&commandTemplate, data)
 
 	_, err := db.Exec(command)

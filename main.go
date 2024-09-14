@@ -36,9 +36,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Pressione Enter para continuar...")
+	fmt.Println("Press Enter to Continue...")
 	bufio.NewReader(os.Stdin).ReadBytes('\n')
-	fmt.Println("Continuando...")
 
 	updateData := postgres.UpdateTableData{
 		TableName:   "students",
@@ -46,7 +45,17 @@ func main() {
 		ColumnValue: "'loucao@bla.co'",
 		Id:          2,
 	}
+
 	err = postgres.UpdateTableRow(db, &updateData)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Press Enter to Continue...")
+	bufio.NewReader(os.Stdin).ReadBytes('\n')
+
+	deleteData := postgres.DeleteTableData{Id: 1, TableName: "students"}
+	err = postgres.DeleteRowFromTable(db, &deleteData)
 	if err != nil {
 		log.Fatal(err)
 	}
