@@ -1,11 +1,8 @@
 package main
 
 import (
-	"bufio"
 	"cdc-incremental-pipeline/postgres"
-	"fmt"
 	"log"
-	"os"
 
 	_ "github.com/lib/pq"
 )
@@ -26,36 +23,6 @@ func main() {
 	defer db.Close()
 
 	err = postgres.CreateTable(db)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	student := postgres.Student{Name: "lek", Email: "lek@dinossauro.com", Age: 100}
-	err = postgres.InsertRowIntoTable(db, &student)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println("Press Enter to Continue...")
-	bufio.NewReader(os.Stdin).ReadBytes('\n')
-
-	updateData := postgres.UpdateTableData{
-		TableName:   "students",
-		ColumnName:  "email",
-		ColumnValue: "'loucao@bla.co'",
-		Id:          2,
-	}
-
-	err = postgres.UpdateTableRow(db, &updateData)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println("Press Enter to Continue...")
-	bufio.NewReader(os.Stdin).ReadBytes('\n')
-
-	deleteData := postgres.DeleteTableData{Id: 1, TableName: "students"}
-	err = postgres.DeleteRowFromTable(db, &deleteData)
 	if err != nil {
 		log.Fatal(err)
 	}
