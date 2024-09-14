@@ -1,9 +1,13 @@
 services:
   db:
     image: postgres:12.20-bullseye
+    command: -c config_file=/etc/postgresql.conf
     ports:
       - "5432:5432"
     environment:
       - POSTGRES_PASSWORD=password
       - POSTGRES_USER=root
       - POSTGRES_DB=university
+    volumes:
+      - customConf:
+        - ./postgresql.conf:/etc/postgresql.conf
