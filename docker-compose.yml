@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:12.20-bullseye
-    command: -c config_file=/etc/postgresql.conf
+    command: -c wal_level=logical
     ports:
       - "5432:5432"
     environment:
@@ -9,5 +9,4 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_DB=university
     volumes:
-      - customConf:
-        - ./postgresql.conf:/etc/postgresql.conf
+      - ./postgresql.conf:/etc/postgresql.conf
