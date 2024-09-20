@@ -8,12 +8,14 @@ import (
 )
 
 const (
-	sqlPath                     = "./postgres/sql"
-	templatesPath               = sqlPath + "/templates"
-	createTablePath             = sqlPath + "/create_table.sql"
-	insertIntoTableTemplatePath = templatesPath + "/insert_into_table.sql"
-	updateRowTemplatePath       = templatesPath + "/update_line_from_table.sql"
-	deleteRowTemplatePath       = templatesPath + "/delete_from_table.sql"
+	sqlPath                       = "./postgres/sql"
+	templatesPath                 = sqlPath + "/templates"
+	createTablePath               = sqlPath + "/create_table.sql"
+	insertIntoTableTemplatePath   = templatesPath + "/insert_into_table.sql"
+	updateRowTemplatePath         = templatesPath + "/update_line_from_table.sql"
+	deleteRowTemplatePath         = templatesPath + "/delete_from_table.sql"
+	createReplicatorUserPath      = sqlPath + "/create_replicator_role.sql"
+	createStudentsPublicationPath = sqlPath + "/create_publication.sql"
 )
 
 type DeleteTableData struct {
@@ -28,7 +30,7 @@ type UpdateTableData struct {
 	Id          int
 }
 
-func (updateData *UpdateTableData) IsValidColumnValue() bool {
+func (updateData *UpdateTableData) isValidColumnValue() bool {
 	columnValue := updateData.ColumnValue
 
 	_, isInt := columnValue.(int)
@@ -47,15 +49,16 @@ func readFile(path string) string {
 	return string(content)
 }
 
-func CreateTable(db *sql.DB) error {
-	command := readFile(createTablePath)
+func runCommand(db *sql.DB, path string) error {
+	command := readFile(path)
+
 	_, err := db.Exec(command)
 
 	return err
 }
 
-func InsertRowIntoTable(db *sql.DB, values any) error {
-	commandTemplate := readFile(insertIntoTableTemplatePath)
+func runTemplateCommand(db *sql.DB, values any, path string) error {
+	commandTemplate := readFile(path)
 	command := utils.CompileTemplate(&commandTemplate, values)
 
 	_, err := db.Exec(command)
@@ -63,24 +66,34 @@ func InsertRowIntoTable(db *sql.DB, values any) error {
 	return err
 }
 
+func CreateTable(db *sql.DB) error {
+	return runCommand(db, createTablePath)
+}
+
+func InsertRowIntoTable(db *sql.DB, values any) error {
+	return runTemplateCommand(db, values, insertIntoTableTemplatePath)
+}
+
 func UpdateTableRow(db *sql.DB, data *UpdateTableData) error {
-	if !data.IsValidColumnValue() {
-		return errors.New("UpdateTableData.ColumnValue must be an in, float64 or string.")
+	if !data.isValidColumnValue() {
+		return errors.New("UpdateTableData.ColumnValue must be an int, float64 or string.")
 	}
 
-	commandTemplate := readFile(updateRowTemplatePath)
-	command := utils.CompileTemplate(&commandTemplate, data)
-
-	_, err := db.Exec(command)
-
-	return err
+	return runTemplateCommand(db, data, updateRowTemplatePath)
 }
 
 func DeleteRowFromTable(db *sql.DB, data *DeleteTableData) error {
-	commandTemplate := readFile(deleteRowTemplatePath)
-	command := utils.CompileTemplate(&commandTemplate, data)
+	return runTemplateCommand(db, data, deleteRowTemplatePath)
+}
 
-	_, err := db.Exec(command)
+func CreateReplicatorUser(db *sql.DB) error {
+	return runCommand(db, createReplicatorUserPath)
+}
 
-	return err
+func CreatePublication(db *sql.DB) error {
+	return runCommand(db, createStudentsPublicationPath)
+}
+
+func CreateSubscription(db *sql.DB) error {
+	return nil
 }

@@ -26,4 +26,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	postgres.CreateReplicatorUser(db)
+	postgres.CreatePublication(db)
 }
