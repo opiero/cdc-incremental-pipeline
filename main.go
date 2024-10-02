@@ -1,8 +1,8 @@
 package main
 
 import (
+	"cdc-incremental-pipeline/debezium"
 	"cdc-incremental-pipeline/postgres"
-	"log"
 
 	_ "github.com/lib/pq"
 )
@@ -22,11 +22,5 @@ func main() {
 	}
 	defer db.Close()
 
-	err = postgres.CreateTable(db)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	postgres.CreateReplicatorUser(db)
-	postgres.CreatePublication(db)
+	debezium.ConnectToDebezium()
 }
