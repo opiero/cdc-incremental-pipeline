@@ -11,6 +11,8 @@ INSERT INTO students (name, email, age) VALUES ('Dolorita MacIver', 'dmaciver2@e
 INSERT INTO students (name, email, age) VALUES ('Nance Giddens', 'ngiddens3@facebook.com', 29);
 INSERT INTO students (name, email, age) VALUES ('Mill I''anson', 'mianson4@ehow.com', 25);
 
+ALTER TABLE students REPLICA IDENTITY FULL;
+
 CREATE ROLE debezium_user WITH REPLICATION LOGIN PASSWORD 'password';
 CREATE PUBLICATION students_publication FOR TABLE students;
 GRANT SELECT ON students TO debezium_user;
